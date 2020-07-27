@@ -12,20 +12,30 @@ import java.util.Arrays;
  */
 public class TransitCalculator {
   static int numberOfDays;
-  int individualRides;
+  int individualRides, cityCode;
+  String city;
   String[] FareOptionsNames = {"Pay-per-ride","7-day Unlimited Rides", "30-day Unlimited Rides"};
-  double[] regularFarePrices = {2.75, 33.00, 127.00} ;
-  double[] reducedFarePrices = {1.35, 16.50, 63.50};
-  double[] FareOptions = regularFarePrices ;
+  double[][] regularFarePrices = {{2.75, 2.50}, {33.00, 30.00}, { 127.00, 120.00}} ;
+  double[][] reducedFarePrices = {{1.35, 1.00}, {16.50, 15.00}, {63.50, 60.00}};
+  double[][] FareOptions = regularFarePrices ;
   int age;
   boolean isDisabled, reduced = false;
   
-    public TransitCalculator(int daysCount, int rides, int umur, boolean dis){
+    public TransitCalculator(String cityName,int daysCount, int rides, int umur, boolean dis){
        
        numberOfDays = daysCount;
        individualRides = rides;
        age = umur;
        isDisabled = dis;
+       city = cityName;
+       
+       switch(city){
+           case "New York" : cityCode = 0;
+           break;
+           case "Mexico City" : cityCode =1;
+           break;
+           default : System.out.println("No city available!");
+       }
        
        if(age >= 65 || isDisabled){
            reduced = true;
@@ -33,15 +43,15 @@ public class TransitCalculator {
        }
     }
     //This method calculates the price per ride for 7-day Unlimited Rides 
-    public double unlimited7Price(){
-       double perRideFee =  Math.ceil((double)numberOfDays / 7) * FareOptions[1] / individualRides;
+    public double unlimited7Price(int cityCode){
+       double perRideFee =  Math.ceil((double)numberOfDays / 7) * FareOptions[1][cityCode] / individualRides;
        return perRideFee;
     }
     //This method calculated the price per ride for each available package
     public double[] getRidePrices(){
-      double daily = FareOptions[0];
-      double weekly = unlimited7Price();
-      double monthly = Math.ceil((double)numberOfDays / 30) * FareOptions[2] / individualRides;
+      double daily = FareOptions[0][cityCode];
+      double weekly = unlimited7Price(cityCode);
+      double monthly = Math.ceil((double)numberOfDays / 30) * FareOptions[2][cityCode] / individualRides;
       double[] ridePrices = {daily,weekly,monthly};
       return ridePrices;
     }
@@ -66,7 +76,7 @@ public class TransitCalculator {
     
     public static void main(String[] args) {
         // TODO code application logic here
-        TransitCalculator t1 = new TransitCalculator(2,5,30,false);
+        TransitCalculator t1 = new TransitCalculator("Mexico City",2,5,30,false);
         
         if(numberOfDays > 30){
             System.out.println("Number of days are not compatible");
